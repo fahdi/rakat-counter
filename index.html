@@ -3,312 +3,239 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1a472a">
-    <meta name="description" content="Automatic rakat counter using motion detection">
-    <title>Rakat Counter</title>
-    <link rel="manifest" href="data:application/manifest+json,{
-        %22name%22:%22Rakat Counter%22,
-        %22short_name%22:%22Rakat%22,
-        %22start_url%22:%22./%22,
-        %22display%22:%22standalone%22,
-        %22background_color%22:%22%23ffffff%22,
-        %22theme_color%22:%22%231a472a%22,
-        %22scope%22:%22./%22
-    }">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Salah | Rakat Counter</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --p: #1a472a;
+            --a: #d4af37;
+            --b: #0d1a12;
+            --t: #fff;
+            --g: rgba(255, 255, 255, .1)
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: #f8f9fa;
+            margin: 0;
+            font-family: Outfit, sans-serif;
+            background: radial-gradient(circle at top, #2d5a3f, var(--b));
+            color: var(--t);
+            height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            justify-content: center;
+            overflow: hidden;
+            touch-action: none
         }
 
-        .container {
-            background: white;
-            border-radius: 24px;
-            padding: 40px 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            max-width: 300px;
+        .c {
             width: 100%;
+            max-width: 400px;
+            padding: 2rem;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            height: 100%;
+            justify-content: space-between
         }
 
         h1 {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 10px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .status {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 30px;
-            height: 20px;
-        }
-
-        .status.active {
-            color: #1a472a;
-            font-weight: 600;
-        }
-
-        .rakat-display {
-            font-size: 100px;
+            font-size: 1.5rem;
             font-weight: 300;
-            color: #1a472a;
-            margin: 20px 0;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
+            letter-spacing: .2rem;
+            margin: 2rem 0 0;
+            color: var(--a);
+            text-transform: uppercase
         }
 
-        .info-box {
-            background: #f0f8f4;
-            border: 1px solid #d0e8e0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 24px;
-            font-size: 13px;
-            color: #1a472a;
-            line-height: 1.6;
-        }
-
-        .controls {
+        .d {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
+            height: 300px
         }
 
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
+        .r {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, .2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--g);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, .5);
+            transition: transform .3s cubic-bezier(.175, .885, .32, 1.275)
+        }
+
+        .r.p {
+            transform: scale(1.1);
+            border-color: var(--a)
+        }
+
+        #count {
+            font-size: 8rem;
+            font-weight: 600;
+            margin: 0
+        }
+
+        .l {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: .3rem;
+            opacity: .7;
+            margin-top: -.5rem
+        }
+
+        .s {
+            display: inline-block;
+            padding: .5rem 1rem;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, .3);
+            font-size: .8rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, .2);
+            margin-bottom: 1rem
+        }
+
+        .s.active {
+            background: var(--a);
+            color: #000;
+            border-color: var(--a)
+        }
+
+        .ctrl {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-bottom: 2rem
+        }
+
+        button {
+            background: var(--g);
+            border: 1px solid rgba(255, 255, 255, .2);
+            color: #fff;
+            padding: 1rem;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            font-family: inherit
         }
 
-        .reset-btn {
-            background: #f0f0f0;
-            color: #666;
+        button.primary {
+            background: var(--a);
+            color: #000;
+            border: none
         }
 
-        .reset-btn:active {
-            background: #e0e0e0;
+        button.sec {
+            font-size: .9rem;
+            opacity: .8
         }
 
-        .start-btn {
-            background: #1a472a;
-            color: white;
-            flex: 2;
+        .hidden {
+            display: none
         }
 
-        .start-btn:active {
-            background: #0f2d1a;
-        }
-
-        .start-btn.active {
-            background: #28a745;
-        }
-
-        .start-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .debug {
-            font-size: 11px;
-            color: #ccc;
-            margin-top: 16px;
-            font-family: monospace;
+        #debug {
+            position: fixed;
+            bottom: 5px;
+            font-size: .6rem;
+            opacity: .3;
+            width: 100%
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Rakat Counter</h1>
-        <div class="status" id="status">Press Start to begin</div>
-        <div class="rakat-display" id="rakatCount">0</div>
-
-        <div class="info-box">
-            <p>Place phone in pocket or on prayer mat. App will automatically count rakahs from your movements.</p>
+    <div class="c">
+        <header>
+            <h1>Salah</h1>
+            <div id="status" class="s">Standby</div>
+        </header>
+        <div class="d">
+            <div id="circle" class="r">
+                <p id="count">0</p><span class="l">Rakah</span>
+            </div>
         </div>
-
-        <div class="controls">
-            <button class="btn start-btn" id="startBtn">Start</button>
-            <button class="btn reset-btn" id="resetBtn">Reset</button>
+        <div class="ctrl">
+            <button id="start" class="primary">Start Prayer</button>
+            <button id="stop" class="hidden">Stop</button>
+            <button id="reset" class="sec">Reset Count</button>
         </div>
-
-        <div class="debug" id="debug"></div>
     </div>
+    <div id="debug"></div>
+    <script type="module">
+        import { RakatCounter } from './counter.js';
+        const countEl = document.getElementById('count'),
+            statusEl = document.getElementById('status'),
+            circleEl = document.getElementById('circle'),
+            debugEl = document.getElementById('debug'),
+            startBtn = document.getElementById('start'),
+            stopBtn = document.getElementById('stop'),
+            resetBtn = document.getElementById('reset');
 
-    <script>
-        const rakatDisplay = document.getElementById('rakatCount');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const status = document.getElementById('status');
-        const debugDiv = document.getElementById('debug');
-
-        let rakatCount = parseInt(localStorage.getItem('rakatCount')) || 0;
-        let isMonitoring = false;
-        let motionData = [];
-        const BUFFER_SIZE = 30;
-        const RUKU_THRESHOLD = -3.5; // Pitch threshold for bowing (device tilts down)
-        const SAJDAH_THRESHOLD = -7; // Stronger downward tilt for prostration
-        let lastRakatTime = 0;
-        const RAKAT_COOLDOWN = 2000; // Minimum 2 seconds between rakahs
-
-        let lastState = 'standing'; // standing, ruku, sajdah
-        let rakatSequence = [];
-
-        function updateDisplay() {
-            rakatDisplay.textContent = rakatCount;
-            localStorage.setItem('rakatCount', rakatCount);
-        }
-
-        function handleMotion(event) {
-            if (!isMonitoring) return;
-
-            const alpha = event.alpha || 0; // Z axis rotation
-            const beta = event.beta || 0;   // X axis rotation (pitch - forward/back)
-            const gamma = event.gamma || 0; // Y axis rotation (roll - left/right)
-
-            motionData.push({
-                beta: beta,
-                gamma: Math.abs(gamma),
-                timestamp: Date.now()
-            });
-
-            if (motionData.length > BUFFER_SIZE) {
-                motionData.shift();
-            }
-
-            // Calculate average pitch over last few readings
-            const avgBeta = motionData.reduce((a, b) => a + b.beta, 0) / motionData.length;
-
-            // State machine: Detect transitions
-            let newState = lastState;
-
-            if (avgBeta < SAJDAH_THRESHOLD) {
-                newState = 'sajdah';
-            } else if (avgBeta < RUKU_THRESHOLD && avgBeta > SAJDAH_THRESHOLD) {
-                newState = 'ruku';
-            } else if (avgBeta > -1) {
-                newState = 'standing';
-            }
-
-            // Detect rakat completion: standing -> ruku -> standing -> sajdah -> (sitting/sajdah) -> standing
-            if (newState !== lastState) {
-                rakatSequence.push(newState);
-
-                // Keep only recent sequence
-                if (rakatSequence.length > 8) {
-                    rakatSequence.shift();
-                }
-
-                // Detect rakat pattern: must return to standing after sajdah
-                if (lastState === 'sajdah' && newState === 'standing') {
-                    const now = Date.now();
-                    if (now - lastRakatTime > RAKAT_COOLDOWN) {
-                        rakatCount++;
-                        lastRakatTime = now;
-                        updateDisplay();
-                        status.textContent = `Rakat ${rakatCount} ✓`;
-                        if (navigator.vibrate) {
-                            navigator.vibrate([50, 30, 50]);
-                        }
-                        setTimeout(() => {
-                            status.textContent = 'Continue...';
-                        }, 1000);
-                    }
-                }
-
-                lastState = newState;
-            }
-
-            // Update debug info
-            debugDiv.textContent = `β:${avgBeta.toFixed(1)}° | ${newState} | seq:${rakatSequence.join('→')}`;
-        }
-
-        startBtn.addEventListener('click', () => {
-            if (!isMonitoring) {
-                if (typeof (DeviceOrientationEvent) !== 'undefined' && typeof (DeviceOrientationEvent.requestPermission) === 'function') {
-                    // iOS 13+
-                    DeviceOrientationEvent.requestPermission()
-                        .then(permissionState => {
-                            if (permissionState === 'granted') {
-                                startMonitoring();
-                            } else {
-                                status.textContent = 'Permission denied';
-                            }
-                        })
-                        .catch(console.error);
-                } else {
-                    // Non-iOS or older iOS
-                    startMonitoring();
-                }
-            } else {
-                stopMonitoring();
+        const counter = new RakatCounter({
+            onCountChange: (c) => {
+                countEl.innerText = c;
+                circleEl.classList.add('p');
+                setTimeout(() => circleEl.classList.remove('p'), 300);
+                if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
+                localStorage.setItem('rakat_count', c);
             }
         });
 
-        function startMonitoring() {
-            isMonitoring = true;
-            lastState = 'standing';
-            rakatSequence = [];
-            startBtn.textContent = 'Stop';
-            startBtn.classList.add('active');
-            status.textContent = 'Listening for movement...';
+        const saved = localStorage.getItem('rakat_count');
+        if (saved) {
+            counter.count = parseInt(saved);
+            countEl.innerText = counter.count;
+        }
+
+        async function handleMotion(e) {
+            counter.processPitch(e.beta);
+            statusEl.innerText = counter.state.toUpperCase();
+            debugEl.innerText = `Pitch: ${e.beta.toFixed(1)}° | State: ${counter.state}`;
+        }
+
+        startBtn.onclick = async () => {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const p = await DeviceOrientationEvent.requestPermission();
+                if (p !== 'granted') return alert('Permission denied');
+            }
+            startBtn.classList.add('hidden');
+            stopBtn.classList.remove('hidden');
+            statusEl.classList.add('active');
             window.addEventListener('deviceorientation', handleMotion);
-        }
+        };
 
-        function stopMonitoring() {
-            isMonitoring = false;
-            startBtn.textContent = 'Start';
-            startBtn.classList.remove('active');
-            status.textContent = 'Paused';
+        stopBtn.onclick = () => {
+            startBtn.classList.remove('hidden');
+            stopBtn.classList.add('hidden');
+            statusEl.classList.remove('active');
+            statusEl.innerText = 'STANDBY';
             window.removeEventListener('deviceorientation', handleMotion);
-        }
+        };
 
-        resetBtn.addEventListener('click', () => {
-            rakatCount = 0;
-            updateDisplay();
-            rakatSequence = [];
-            status.textContent = isMonitoring ? 'Listening for movement...' : 'Press Start to begin';
-        });
+        resetBtn.onclick = () => {
+            if (confirm('Reset?')) {
+                counter.reset();
+                countEl.innerText = 0;
+                localStorage.removeItem('rakat_count');
+            }
+        };
 
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
-                self.addEventListener('install', e => {
-                    e.waitUntil(caches.open('rakat-v1').then(cache => {
-                        return cache.addAll(['/']);
-                    }).catch(() => Promise.resolve()));
-                    self.skipWaiting();
-                });
-                self.addEventListener('activate', e => {
-                    e.waitUntil(clients.claim());
-                });
-                self.addEventListener('fetch', e => {
-                    e.respondWith(caches.match(e.request).catch(() => fetch(e.request)));
-                });
-            `)).catch(() => { });
-        }
-
-        updateDisplay();
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     </script>
 </body>
 
