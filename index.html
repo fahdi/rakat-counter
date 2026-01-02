@@ -490,13 +490,13 @@
                 statusEl.innerText = 'AUTO-SENSING ACTIVE';
             } catch (err) {
                 console.error(err);
-                warnEl.innerHTML = `⚠️ <b>Setup Failed:</b> ${err.message}. Please refresh and allow permissions, or use manual tap.`;
+                warnEl.innerHTML = `⚠️ <b>Auto-Count Disabled:</b> Sensors are blocked (${err.message}).<br>Please touch the big number to count manually.`;
                 warnEl.classList.add('active');
 
-                // Fallback to manual-ish even if sensors fail to hide the warn
                 startBtn.classList.add('hidden');
                 stopBtn.classList.remove('hidden');
                 statusEl.innerText = 'MANUAL TAP MODE';
+                if ('vibrate' in navigator) navigator.vibrate(200);
             }
         };
 

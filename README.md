@@ -50,7 +50,9 @@ Even with perfect logic, we hit a wall: **Browser Privacy Security.**
 - **The Solution**: 
     1. **Health Checks**: We added a startup "Health Check" that scans the phone's hardware. If it doesn't see sensors, it tells the user immediately via a warning banner.
     2. **Graceful Fallback**: The "Zero-Touch" dream is great, but the prayer is more important. We implemented a "Manual Tap" fallback. If sensors are blocked or missing, the status changes to "Manual Tap Mode," and the user can simply tap the big number on the screen to count their prostrations.
-    3. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
+    3. **Hybrid Detection**: In Mat Mode, we now use a "Double-Layer" detection—measuring both **Light Drops** (camera) and **Impact Thumps** (accelerometer). If one fails (e.g., room is too dark), the other serves as a backup.
+    4. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
+    5. **The Silent Failure Hack**: During testing on Android and iOS, we found that sometimes sensors don't "error out"—they just stay silent. We added a vibration alert when setup fails so the user knows immediately that they need to switch to manual mode without looking at the screen.
 
 ---
 
