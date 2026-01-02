@@ -11,7 +11,8 @@
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --p: #1a472a;
@@ -42,13 +43,13 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
             height: 100%;
             justify-content: space-between
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: .2rem;
             margin: 0;
@@ -64,7 +65,6 @@
             border: none;
             color: var(--t);
             opacity: .5;
-            padding: 0;
             cursor: pointer
         }
 
@@ -109,6 +109,7 @@
 
         .d {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 300px
@@ -137,11 +138,12 @@
         #count {
             font-size: 8rem;
             font-weight: 600;
-            margin: 0
+            margin: 0;
+            font-family: Inter, sans-serif
         }
 
         .l {
-            font-size: 1rem;
+            font-size: .9rem;
             text-transform: uppercase;
             letter-spacing: .3rem;
             opacity: .7;
@@ -150,19 +152,34 @@
 
         .s {
             display: inline-block;
-            padding: .5rem 1rem;
+            padding: .4rem .8rem;
             border-radius: 20px;
             background: rgba(0, 0, 0, .3);
-            font-size: .8rem;
+            font-size: .7rem;
             font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, .2);
-            margin-bottom: 1rem
+            border: 1px solid rgba(255, 255, 255, .1);
+            margin-bottom: 1rem;
+            color: var(--a)
         }
 
-        .s.active {
+        .s-dots {
+            display: flex;
+            gap: .5rem;
+            margin-top: 1rem
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .2);
+            transition: .3s
+        }
+
+        .dot.a {
             background: var(--a);
-            color: #000;
-            border-color: var(--a)
+            box-shadow: 0 0 10px var(--a)
         }
 
         .ctrl {
@@ -176,23 +193,73 @@
             background: var(--g);
             border: 1px solid rgba(255, 255, 255, .2);
             color: #fff;
-            padding: 1rem;
+            padding: 1.2rem;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            font-family: inherit
+            font-family: inherit;
+            transition: .2s
+        }
+
+        button:active {
+            transform: scale(.98)
         }
 
         button.primary {
             background: var(--a);
             color: #000;
-            border: none
+            border: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, .2)
         }
 
         button.sec {
             font-size: .9rem;
-            opacity: .8
+            opacity: .6;
+            border: none;
+            background: none
+        }
+
+        .mode-sel {
+            display: flex;
+            background: rgba(0, 0, 0, .3);
+            border-radius: 10px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .mode-sel button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: .6rem;
+            font-size: .8rem;
+            opacity: .5;
+            border-radius: 8px
+        }
+
+        .mode-sel button.a {
+            background: var(--g);
+            opacity: 1;
+            color: var(--a)
+        }
+
+        .mat-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, .5);
+            backdrop-filter: blur(2px)
+        }
+
+        .mat-area.active {
+            display: flex
         }
 
         .hidden {
@@ -202,9 +269,10 @@
         #debug {
             position: fixed;
             bottom: 5px;
-            font-size: .6rem;
+            font-size: 10px;
             opacity: .3;
-            width: 100%
+            width: 100%;
+            text-align: center
         }
     </style>
 </head>
@@ -213,13 +281,12 @@
     <div class="c">
         <header>
             <h1>Salah</h1>
-            <div id="status" class="s">Standby</div>
+            <div id="status" class="s">READY</div>
             <button id="helpBtn" class="h-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
             </button>
         </header>
@@ -227,20 +294,35 @@
             <div id="circle" class="r">
                 <p id="count">0</p><span class="l">Rakah</span>
             </div>
+            <div class="s-dots">
+                <div class="dot" id="dot1"></div>
+                <div class="dot" id="dot2"></div>
+            </div>
         </div>
         <div class="ctrl">
+            <div class="mode-sel">
+                <button id="modeMat" class="a">Mat (Foolproof)</button>
+                <button id="modePocket">Pocket</button>
+            </div>
             <button id="start" class="primary">Start Prayer</button>
-            <button id="stop" class="hidden">Stop</button>
-            <button id="reset" class="sec">Reset Count</button>
+            <button id="stop" class="hidden">Finish</button>
+            <button id="reset" class="sec">Reset Counter</button>
+        </div>
+    </div>
+    <div id="matArea" class="mat-area">
+        <div style="text-align:center;pointer-events:none">
+            <div style="font-size:3rem;margin-bottom:1rem">📿</div>
+            <h2 style="color:var(--a);margin:0">Mat Mode Active</h2>
+            <p style="opacity:.6">Tap screen with head/nose at each Sajdah</p>
         </div>
     </div>
     <div id="helpModal" class="m">
         <div class="m-c">
             <h2>How to Use</h2>
-            <p>1. Tap <b>Start Prayer</b> and grant motion permissions.</p>
-            <p>2. Keep phone in your pocket or flat on the prayer mat.</p>
-            <p>3. Pray normally. The app detects bowing and prostration.</p>
-            <p>4. <b>1 Rakah</b> is counted after you return to standing from prostration (Sajdah).</p>
+            <p><b>Mat Mode (Default):</b> Place phone flat on mat (screen up) where your head touches. Tap the screen
+                with your nose/head at each Sajdah.</p>
+            <p><b>Pocket Mode:</b> Keeps phone in pocket. Screen must stay on for sensors to work.</p>
+            <p><b>Logic:</b> 2 Sajdahs = 1 Rakah. Works for standing and sitting prayers.</p>
             <button id="closeHelp" class="primary" style="width:100%;margin-top:1rem">Got it</button>
         </div>
     </div>
@@ -253,17 +335,100 @@
             debugEl = document.getElementById('debug'),
             startBtn = document.getElementById('start'),
             stopBtn = document.getElementById('stop'),
-            resetBtn = document.getElementById('reset');
+            resetBtn = document.getElementById('reset'),
+            modePocket = document.getElementById('modePocket'),
+            modeMat = document.getElementById('modeMat'),
+            matArea = document.getElementById('matArea'),
+            dot1 = document.getElementById('dot1'),
+            dot2 = document.getElementById('dot2');
+
+        let wakeLock = null;
 
         const counter = new RakatCounter({
+            mode: 'mat',
             onCountChange: (c) => {
                 countEl.innerText = c;
                 circleEl.classList.add('p');
                 setTimeout(() => circleEl.classList.remove('p'), 300);
                 if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
                 localStorage.setItem('rakat_count', c);
+                updateDots(0);
+            },
+            onSajdahDetect: (s) => {
+                const stage = s % 2 || 2;
+                updateDots(stage);
+                if ('vibrate' in navigator) navigator.vibrate(50);
             }
         });
+
+        function updateDots(s) {
+            dot1.classList.toggle('a', s >= 1);
+            dot2.classList.toggle('a', s >= 2);
+            if (s === 0) { dot1.classList.remove('a'); dot2.classList.remove('a'); }
+        }
+
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) { console.error(`${err.name}, ${err.message}`); }
+            }
+        }
+
+        async function handleMotion(e) {
+            counter.processPitch(e.beta);
+            debugEl.innerText = `Pitch: ${e.beta.toFixed(1)}° | Sajdahs: ${counter.sajdahCount}`;
+        }
+
+        modePocket.onclick = () => {
+            modePocket.classList.add('a');
+            modeMat.classList.remove('a');
+            counter.setMode('pocket');
+        };
+
+        modeMat.onclick = () => {
+            modeMat.classList.add('a');
+            modePocket.classList.remove('a');
+            counter.setMode('mat');
+        };
+
+        matArea.onclick = () => {
+            counter.processSajdahTrigger();
+        };
+
+        startBtn.onclick = async () => {
+            await requestWakeLock();
+            if (counter.mode === 'pocket') {
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    const p = await DeviceOrientationEvent.requestPermission();
+                    if (p !== 'granted') return alert('Permission denied');
+                }
+                window.addEventListener('deviceorientation', handleMotion);
+            } else {
+                matArea.classList.add('active');
+            }
+            startBtn.classList.add('hidden');
+            stopBtn.classList.remove('hidden');
+            statusEl.innerText = counter.mode.toUpperCase() + ' ACTIVE';
+        };
+
+        stopBtn.onclick = () => {
+            if (wakeLock) { wakeLock.release(); wakeLock = null; }
+            startBtn.classList.remove('hidden');
+            stopBtn.classList.add('hidden');
+            statusEl.innerText = 'READY';
+            window.removeEventListener('deviceorientation', handleMotion);
+            matArea.classList.remove('active');
+        };
+
+        resetBtn.onclick = () => {
+            if (confirm('Reset?')) {
+                counter.reset();
+                countEl.innerText = 0;
+                updateDots(0);
+                localStorage.removeItem('rakat_count');
+            }
+        };
 
         const saved = localStorage.getItem('rakat_count');
         if (saved) {
@@ -271,49 +436,12 @@
             countEl.innerText = counter.count;
         }
 
-        async function handleMotion(e) {
-            counter.processPitch(e.beta);
-            statusEl.innerText = counter.state.toUpperCase();
-            debugEl.innerText = `Pitch: ${e.beta.toFixed(1)}° | State: ${counter.state}`;
-        }
-
-        startBtn.onclick = async () => {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const p = await DeviceOrientationEvent.requestPermission();
-                if (p !== 'granted') return alert('Permission denied');
-            }
-            startBtn.classList.add('hidden');
-            stopBtn.classList.remove('hidden');
-            statusEl.classList.add('active');
-            window.addEventListener('deviceorientation', handleMotion);
-        };
-
-        stopBtn.onclick = () => {
-            startBtn.classList.remove('hidden');
-            stopBtn.classList.add('hidden');
-            statusEl.classList.remove('active');
-            statusEl.innerText = 'STANDBY';
-            window.removeEventListener('deviceorientation', handleMotion);
-        };
-
-        resetBtn.onclick = () => {
-            if (confirm('Reset?')) {
-                counter.reset();
-                countEl.innerText = 0;
-                localStorage.removeItem('rakat_count');
-            }
-        };
-
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-        // Help Modal Logic
-        const helpBtn = document.getElementById('helpBtn');
-        const helpModal = document.getElementById('helpModal');
-        const closeHelp = document.getElementById('closeHelp');
-
-        helpBtn.onclick = () => helpModal.classList.add('v');
-        closeHelp.onclick = () => helpModal.classList.remove('v');
-        helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('v'); };
+        const helpBtn = document.getElementById('helpBtn'), m = document.getElementById('helpModal'), c = document.getElementById('closeHelp');
+        helpBtn.onclick = () => m.classList.add('v');
+        c.onclick = () => m.classList.remove('v');
+        m.onclick = (e) => { if (e.target === m) m.classList.remove('v') };
     </script>
 </body>
 

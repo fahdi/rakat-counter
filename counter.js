@@ -2,19 +2,23 @@ export class RakatCounter {
     constructor(options = {}) {
         this.rukuThreshold = options.rukuThreshold || -3.5;
         this.sajdahThreshold = options.sajdahThreshold || -7;
-        this.standingThreshold = options.standingThreshold || -1;
-        this.cooldown = options.cooldown === undefined ? 2000 : options.cooldown;
-        this.bufferSize = options.bufferSize || 1; // Default to 1 for tests unless specified
+        this.standingThreshold = options.standingThreshold || -2; // Slightly more relaxed for sitting
+        this.cooldown = options.cooldown === undefined ? 3000 : options.cooldown; // Higher cooldown to prevent double hits
+        this.bufferSize = options.bufferSize || 10;
 
         this.count = 0;
+        this.sajdahCount = 0;
         this.state = 'standing';
         this.buffer = [];
-        this.hasReachedSajdah = false;
-        this.lastRakatTime = 0;
+        this.lastSajdahTime = 0;
+        this.mode = options.mode || 'pocket';
         this.onCountChange = options.onCountChange || (() => { });
+        this.onSajdahDetect = options.onSajdahDetect || (() => { });
     }
 
     processPitch(pitch) {
+        if (this.mode === 'mat') return; // In mat mode, we only listen for touch triggers
+
         this.buffer.push(pitch);
         if (this.buffer.length > this.bufferSize) {
             this.buffer.shift();
@@ -25,47 +29,47 @@ export class RakatCounter {
     }
 
     updateState(avgPitch) {
-        if (avgPitch < this.sajdahThreshold) {
+        if (avgPitch <= this.sajdahThreshold) {
             if (this.state !== 'sajdah') {
                 this.state = 'sajdah';
-                this.hasReachedSajdah = true;
+                this.processSajdahTrigger();
             }
-        } else if (avgPitch < this.rukuThreshold) {
-            if (this.state !== 'sajdah') {
-                this.state = 'ruku';
-            }
-        } else if (avgPitch > this.standingThreshold) {
-            if (this.state !== 'standing') {
-                this.checkRakatCompletion();
-                this.state = 'standing';
-            }
+        } else if (avgPitch >= this.standingThreshold) {
+            this.state = 'standing';
         }
     }
 
-    checkRakatCompletion() {
-        if (this.hasReachedSajdah) {
-            const now = Date.now();
-            if (now - this.lastRakatTime >= this.cooldown) {
+    processSajdahTrigger() {
+        const now = Date.now();
+        // Debounce to avoid multiple counts for same movement
+        if (now - this.lastSajdahTime >= this.cooldown) {
+            this.sajdahCount++;
+            this.lastSajdahTime = now;
+            this.onSajdahDetect(this.sajdahCount);
+
+            if (this.sajdahCount > 0 && this.sajdahCount % 2 === 0) {
                 this.count++;
-                this.lastRakatTime = now;
                 this.onCountChange(this.count);
             }
-            this.hasReachedSajdah = false;
+            return true;
         }
+        return false;
+    }
+
+    setMode(mode) {
+        this.mode = mode;
+        this.reset();
     }
 
     getCount() {
         return this.count;
     }
 
-    getState() {
-        return this.state;
-    }
-
     reset() {
         this.count = 0;
-        this.hasReachedSajdah = false;
+        this.sajdahCount = 0;
         this.state = 'standing';
         this.buffer = [];
+        this.lastSajdahTime = 0;
     }
 }
