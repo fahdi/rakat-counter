@@ -39,12 +39,13 @@ export class RakatCounter {
     }
 
     processLightLevel(brightness) {
-        // brightness is 0-255. Threshold ~30 for 'covered'
-        const DARK_THRESHOLD = 40;
+        // brightness is 0-255. 
+        // We trigger on darkness (covering the phone)
+        const DARK_THRESHOLD = 50;
         if (brightness < DARK_THRESHOLD && !this.isDark) {
             this.isDark = true;
             this.processSajdahTrigger();
-        } else if (brightness > DARK_THRESHOLD + 20) {
+        } else if (brightness > DARK_THRESHOLD + 15) {
             this.isDark = false;
         }
     }
@@ -81,5 +82,6 @@ export class RakatCounter {
         this.state = 'standing';
         this.buffer = [];
         this.lastSajdahTime = 0;
+        this.isDark = false;
     }
 }
