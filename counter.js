@@ -11,9 +11,10 @@ export class RakatCounter {
         this.state = 'standing';
         this.buffer = [];
         this.lastSajdahTime = 0;
-        this.mode = options.mode || 'pocket';
+        this.mode = options.mode || 'mat';
         this.onCountChange = options.onCountChange || (() => { });
         this.onSajdahDetect = options.onSajdahDetect || (() => { });
+        this.isDark = false;
     }
 
     processPitch(pitch) {
@@ -25,10 +26,8 @@ export class RakatCounter {
         }
 
         const avgPitch = this.buffer.reduce((a, b) => a + b, 0) / this.buffer.length;
-        this.updateState(avgPitch);
-    }
 
-    updateState(avgPitch) {
+        // Pocket Mode Logic (Motion)
         if (avgPitch <= this.sajdahThreshold) {
             if (this.state !== 'sajdah') {
                 this.state = 'sajdah';
@@ -36,6 +35,17 @@ export class RakatCounter {
             }
         } else if (avgPitch >= this.standingThreshold) {
             this.state = 'standing';
+        }
+    }
+
+    processLightLevel(brightness) {
+        // brightness is 0-255. Threshold ~30 for 'covered'
+        const DARK_THRESHOLD = 40;
+        if (brightness < DARK_THRESHOLD && !this.isDark) {
+            this.isDark = true;
+            this.processSajdahTrigger();
+        } else if (brightness > DARK_THRESHOLD + 20) {
+            this.isDark = false;
         }
     }
 
