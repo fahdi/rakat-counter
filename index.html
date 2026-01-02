@@ -350,14 +350,17 @@
                 countEl.innerText = c;
                 circleEl.classList.add('p');
                 setTimeout(() => circleEl.classList.remove('p'), 300);
-                if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
+                // Double pulse for Rakat completion
+                if ('vibrate' in navigator) navigator.vibrate([100, 50, 100, 50, 100]);
                 localStorage.setItem('rakat_count', c);
-                updateDots(0);
+                // Keep 2nd dot visible for 800ms before clearing
+                setTimeout(() => updateDots(0), 800);
             },
             onSajdahDetect: (s) => {
                 const stage = s % 2 || 2;
                 updateDots(stage);
-                if ('vibrate' in navigator) navigator.vibrate(50);
+                // Single sharp pulse for each sajdah
+                if ('vibrate' in navigator) navigator.vibrate(80);
             }
         });
 
