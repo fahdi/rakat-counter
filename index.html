@@ -147,8 +147,8 @@
 
         .h-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: none;
             color: var(--text-muted);
             width: 40px;
@@ -170,6 +170,7 @@
 
         .h-btn svg {
             display: block;
+            overflow: visible;
         }
 
         .m {
@@ -252,7 +253,8 @@
 
     <div class="card">
         <button id="helpBtn" class="h-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                 <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -296,6 +298,10 @@
             <p><b>3. Well-Lit Room:</b> For the mat mode to work automatically, please pray in a <b>well-lit room</b>.
                 The app needs to see the light so it knows when your head covers the phone.</p>
             <p><b>4. No Tapping:</b> Once you start, you don't need to touch the phone. Just pray naturally!</p>
+            <p style="margin-top:1.5rem;font-size:0.8rem;text-align:center">
+                <a href="https://github.com/fahdi/rakat-counter" target="_blank"
+                    style="color:var(--primary);text-decoration:none;font-weight:bold">View on GitHub</a>
+            </p>
             <button id="closeHelp"
                 style="background:var(--primary);color:white;width:100%;margin-top:1rem;border-radius:12px;cursor:pointer">Got
                 it</button>
