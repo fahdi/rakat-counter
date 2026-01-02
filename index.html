@@ -51,9 +51,60 @@
             font-size: 1.5rem;
             font-weight: 300;
             letter-spacing: .2rem;
-            margin: 2rem 0 0;
+            margin: 0;
             color: var(--a);
             text-transform: uppercase
+        }
+
+        .h-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: var(--t);
+            opacity: .5;
+            padding: 0;
+            cursor: pointer
+        }
+
+        .m {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .9);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s
+        }
+
+        .m.v {
+            opacity: 1;
+            pointer-events: all
+        }
+
+        .m-c {
+            max-width: 320px;
+            text-align: left;
+            padding: 2rem
+        }
+
+        .m-c h2 {
+            color: var(--a);
+            margin-top: 0
+        }
+
+        .m-c p {
+            font-size: .9rem;
+            line-height: 1.6;
+            opacity: .8
         }
 
         .d {
@@ -163,6 +214,14 @@
         <header>
             <h1>Salah</h1>
             <div id="status" class="s">Standby</div>
+            <button id="helpBtn" class="h-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </button>
         </header>
         <div class="d">
             <div id="circle" class="r">
@@ -173,6 +232,16 @@
             <button id="start" class="primary">Start Prayer</button>
             <button id="stop" class="hidden">Stop</button>
             <button id="reset" class="sec">Reset Count</button>
+        </div>
+    </div>
+    <div id="helpModal" class="m">
+        <div class="m-c">
+            <h2>How to Use</h2>
+            <p>1. Tap <b>Start Prayer</b> and grant motion permissions.</p>
+            <p>2. Keep phone in your pocket or flat on the prayer mat.</p>
+            <p>3. Pray normally. The app detects bowing and prostration.</p>
+            <p>4. <b>1 Rakah</b> is counted after you return to standing from prostration (Sajdah).</p>
+            <button id="closeHelp" class="primary" style="width:100%;margin-top:1rem">Got it</button>
         </div>
     </div>
     <div id="debug"></div>
@@ -236,6 +305,15 @@
         };
 
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+        // Help Modal Logic
+        const helpBtn = document.getElementById('helpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelp = document.getElementById('closeHelp');
+
+        helpBtn.onclick = () => helpModal.classList.add('v');
+        closeHelp.onclick = () => helpModal.classList.remove('v');
+        helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('v'); };
     </script>
 </body>
 
