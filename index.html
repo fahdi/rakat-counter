@@ -233,6 +233,21 @@
             display: none;
         }
 
+        .warn-box {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .warn-box.active {
+            display: block;
+        }
+
         #debug {
             position: fixed;
             bottom: 5px;
@@ -240,6 +255,7 @@
             opacity: 0.3;
             width: 100%;
             text-align: center;
+            pointer-events: none;
         }
 
         video {
@@ -281,7 +297,13 @@
         </div>
 
         <div class="info-box">
-            Place phone in pocket or on prayer mat. App will automatically count rakahs from your movements.
+            Automatic mode detects your movements. If your phone or browser doesn't support sensors, you can always tap
+            the big number to count manually.
+        </div>
+
+        <div id="warn" class="warn-box">
+            ⚠️ <b>Sensors restricted.</b> Please ensure you've allowed motion and camera access in your browser
+            settings.
         </div>
 
         <div class="ctrl">
@@ -340,7 +362,23 @@
             debugEl = document.getElementById('debug'),
             video = document.getElementById('v'),
             canvas = document.getElementById('can'),
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d'),
+            warnEl = document.getElementById('warn');
+
+        async function checkSensors() {
+            const support = {
+                motion: 'DeviceMotionEvent' in window,
+                orientation: 'DeviceOrientationEvent' in window,
+                camera: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+            };
+
+            if (!support.motion && !support.orientation) {
+                warnEl.innerHTML = "⚠️ <b>Sensor Error:</b> Your browser doesn't support movement detection. Use <b>Manual Tap</b> instead.";
+                warnEl.classList.add('active');
+            }
+        }
+
+        checkSensors();
 
         let wakeLock = null;
 
@@ -424,29 +462,42 @@
 
         startBtn.onclick = async () => {
             await requestWakeLock();
-            counter.baseLight = 0; // Reset calibration
+            counter.baseLight = 0;
 
-            if (counter.mode === 'pocket') {
-                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    const p = await DeviceOrientationEvent.requestPermission();
-                    if (p !== 'granted') return alert('Permission denied');
-                }
-                window.addEventListener('deviceorientation', handleMotion);
-            } else {
-                // Mat Mode: Use light + impact detection
-                await startCamera();
-                if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                    await DeviceMotionEvent.requestPermission();
-                }
-                window.addEventListener('devicemotion', (e) => {
-                    if (e.accelerationIncludingGravity) {
-                        counter.processMotion(e.accelerationIncludingGravity);
+            try {
+                if (counter.mode === 'pocket') {
+                    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        const p = await DeviceOrientationEvent.requestPermission();
+                        if (p !== 'granted') throw new Error('Motion permission denied');
                     }
-                });
+                    window.addEventListener('deviceorientation', handleMotion);
+                } else {
+                    // Mat Mode
+                    await startCamera();
+                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                        const p = await DeviceMotionEvent.requestPermission();
+                        if (p !== 'granted') throw new Error('Motion permission denied');
+                    }
+                    window.addEventListener('devicemotion', (e) => {
+                        if (e.accelerationIncludingGravity) {
+                            counter.processMotion(e.accelerationIncludingGravity);
+                        }
+                    });
+                }
+                warnEl.classList.remove('active');
+                startBtn.classList.add('hidden');
+                stopBtn.classList.remove('hidden');
+                statusEl.innerText = 'AUTO-SENSING ACTIVE';
+            } catch (err) {
+                console.error(err);
+                warnEl.innerHTML = `⚠️ <b>Setup Failed:</b> ${err.message}. Please refresh and allow permissions, or use manual tap.`;
+                warnEl.classList.add('active');
+
+                // Fallback to manual-ish even if sensors fail to hide the warn
+                startBtn.classList.add('hidden');
+                stopBtn.classList.remove('hidden');
+                statusEl.innerText = 'MANUAL TAP MODE';
             }
-            startBtn.classList.add('hidden');
-            stopBtn.classList.remove('hidden');
-            statusEl.innerText = counter.mode === 'pocket' ? 'Pocket Mode Active' : 'Auto-Detection Active';
         };
 
         stopBtn.onclick = () => {

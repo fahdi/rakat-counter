@@ -44,10 +44,13 @@ We pivot to a **Mat Mode** where the phone lies flat. We asked the user to tap t
 ### Revision 3: The "2-Sajdah" Philosophy
 We realized we were overcomplicating the math. A Rakat is defined by its prostrations. We simplified the internal logic: **2 Sajdahs = 1 Rakat**. This made the app work for people praying while sitting (who don't have dramatic pitch changes) and simplified the state machine.
 
-### Revision 4: The "Light" Bulb Moment (Automatic Mat Mode)
-We needed a way to detect a Sajdah without a tap and without a proximity sensor (which browsers often block). We turned to the **Camera**. 
-- **The Solution**: By sampling the brightness from the front camera, we could detect when a head prostrates over the phone. Darkness = Sajdah. 
-- **The Caveat**: It requires a well-lit room. We updated the UI to a clean, minimalist card design (inspired by user feedback) and added a simple "Easy Guide" to explain this requirement without tech jargon.
+### Revision 5: The Permission Paradox & The Manual Fallback
+Even with perfect logic, we hit a wall: **Browser Privacy Security.**
+- **The Issue**: Many modern browsers (especially Safari on iOS and Chrome on newer Androids) block sensor and camera access unless specific, sometimes hidden, permissions are granted. Users were left with a "frozen" counter.
+- **The Solution**: 
+    1. **Health Checks**: We added a startup "Health Check" that scans the phone's hardware. If it doesn't see sensors, it tells the user immediately via a warning banner.
+    2. **Graceful Fallback**: The "Zero-Touch" dream is great, but the prayer is more important. We implemented a "Manual Tap" fallback. If sensors are blocked or missing, the status changes to "Manual Tap Mode," and the user can simply tap the big number on the screen to count their prostrations.
+    3. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
 
 ---
 
