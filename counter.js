@@ -15,6 +15,8 @@ export class RakatCounter {
         this.onCountChange = options.onCountChange || (() => { });
         this.onSajdahDetect = options.onSajdahDetect || (() => { });
         this.isDark = false;
+        this.baseLight = 0;
+        this.accelBuffer = [];
     }
 
     processPitch(pitch) {
@@ -39,14 +41,30 @@ export class RakatCounter {
     }
 
     processLightLevel(brightness) {
-        // brightness is 0-255. 
-        // We trigger on darkness (covering the phone)
-        const DARK_THRESHOLD = 50;
-        if (brightness < DARK_THRESHOLD && !this.isDark) {
+        if (!this.baseLight) this.baseLight = brightness;
+
+        // Trigger on significant darkness drop (40% of baseline)
+        const threshold = Math.min(this.baseLight * 0.4, 60);
+
+        if (brightness < threshold && !this.isDark) {
             this.isDark = true;
             this.processSajdahTrigger();
-        } else if (brightness > DARK_THRESHOLD + 15) {
+        } else if (brightness > threshold + (this.baseLight * 0.15)) {
             this.isDark = false;
+        }
+    }
+
+    processMotion(accel) {
+        if (this.mode !== 'mat') return;
+        // Impact detection: look for a sudden peak in total acceleration
+        const total = Math.sqrt(accel.x ** 2 + accel.y ** 2 + accel.z ** 2);
+        this.accelBuffer.push(total);
+        if (this.accelBuffer.length > 5) this.accelBuffer.shift();
+
+        const avg = this.accelBuffer.reduce((a, b) => a + b, 0) / this.accelBuffer.length;
+        // 25m/s² is a clear bump (gravity is 9.8)
+        if (total > avg * 2.5 && total > 20) {
+            this.processSajdahTrigger();
         }
     }
 
@@ -83,5 +101,7 @@ export class RakatCounter {
         this.buffer = [];
         this.lastSajdahTime = 0;
         this.isDark = false;
+        this.baseLight = 0;
+        this.accelBuffer = [];
     }
 }

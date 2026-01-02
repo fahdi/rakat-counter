@@ -424,6 +424,8 @@
 
         startBtn.onclick = async () => {
             await requestWakeLock();
+            counter.baseLight = 0; // Reset calibration
+
             if (counter.mode === 'pocket') {
                 if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                     const p = await DeviceOrientationEvent.requestPermission();
@@ -431,11 +433,20 @@
                 }
                 window.addEventListener('deviceorientation', handleMotion);
             } else {
+                // Mat Mode: Use light + impact detection
                 await startCamera();
+                if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                    await DeviceMotionEvent.requestPermission();
+                }
+                window.addEventListener('devicemotion', (e) => {
+                    if (e.accelerationIncludingGravity) {
+                        counter.processMotion(e.accelerationIncludingGravity);
+                    }
+                });
             }
             startBtn.classList.add('hidden');
             stopBtn.classList.remove('hidden');
-            statusEl.innerText = counter.mode === 'pocket' ? 'Pocket Mode Active' : 'Automatic Mat Mode';
+            statusEl.innerText = counter.mode === 'pocket' ? 'Pocket Mode Active' : 'Auto-Detection Active';
         };
 
         stopBtn.onclick = () => {
@@ -448,6 +459,7 @@
             stopBtn.classList.add('hidden');
             statusEl.innerText = 'Ready';
             window.removeEventListener('deviceorientation', handleMotion);
+            window.removeEventListener('devicemotion', null);
         };
 
         resetBtn.onclick = () => {
