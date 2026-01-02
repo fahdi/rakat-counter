@@ -443,6 +443,13 @@
             requestAnimationFrame(detectLight);
         }
 
+        // Periodically recalibrate ambient light if not currently in a sajdah
+        setInterval(() => {
+            if (counter.mode === 'mat' && !counter.isDark) {
+                counter.baseLight = 0; // Trigger a single frame recalibration
+            }
+        }, 5000);
+
         modePocket.onclick = () => {
             modePocket.classList.add('a');
             modeMat.classList.remove('a');

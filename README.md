@@ -51,8 +51,12 @@ Even with perfect logic, we hit a wall: **Browser Privacy Security.**
     1. **Health Checks**: We added a startup "Health Check" that scans the phone's hardware. If it doesn't see sensors, it tells the user immediately via a warning banner.
     2. **Graceful Fallback**: The "Zero-Touch" dream is great, but the prayer is more important. We implemented a "Manual Tap" fallback. If sensors are blocked or missing, the status changes to "Manual Tap Mode," and the user can simply tap the big number on the screen to count their prostrations.
     3. **Hybrid Detection**: In Mat Mode, we now use a "Double-Layer" detection—measuring both **Light Drops** (camera) and **Impact Thumps** (accelerometer). If one fails (e.g., room is too dark), the other serves as a backup.
-    4. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
-    5. **The Silent Failure Hack**: During testing on Android and iOS, we found that sometimes sensors don't "error out"—they just stay silent. We added a vibration alert when setup fails so the user knows immediately that they need to switch to manual mode without looking at the screen.
+    4. **Revision 6: The Silicon Sensitivity Update**: We realized that a "soft" prostration wasn't triggering the sensors. We hyper-tuned the sensitivity:
+        - **Impact**: Now detects thumps as light as 13 m/s² (barely 1.3G).
+        - **Light**: Now triggers on a subtle 30% drop in brightness.
+        - **Auto-Recalibration**: The app now re-scans the room's ambient light every 5 seconds, ensuring that if a cloud passes by or a light is turned on, the "darkness" detection remains razor-sharp.
+    5. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
+    6. **The Silent Failure Hack**: During testing on Android and iOS, we found that sometimes sensors don't "error out"—they just stay silent. We added a vibration alert when setup fails so the user knows immediately that they need to switch to manual mode without looking at the screen.
 
 ---
 

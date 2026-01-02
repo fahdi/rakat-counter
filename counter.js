@@ -43,27 +43,27 @@ export class RakatCounter {
     processLightLevel(brightness) {
         if (!this.baseLight) this.baseLight = brightness;
 
-        // Trigger on significant darkness drop (40% of baseline)
-        const threshold = Math.min(this.baseLight * 0.4, 60);
+        // Trigger on 30% drop from baseline (more sensitive)
+        const threshold = this.baseLight * 0.7;
 
         if (brightness < threshold && !this.isDark) {
             this.isDark = true;
             this.processSajdahTrigger();
-        } else if (brightness > threshold + (this.baseLight * 0.15)) {
+        } else if (brightness > threshold + (this.baseLight * 0.1)) {
             this.isDark = false;
         }
     }
 
     processMotion(accel) {
         if (this.mode !== 'mat') return;
-        // Impact detection: look for a sudden peak in total acceleration
+        // Impact detection: total acceleration spike
         const total = Math.sqrt(accel.x ** 2 + accel.y ** 2 + accel.z ** 2);
         this.accelBuffer.push(total);
         if (this.accelBuffer.length > 5) this.accelBuffer.shift();
 
         const avg = this.accelBuffer.reduce((a, b) => a + b, 0) / this.accelBuffer.length;
-        // 25m/s² is a clear bump (gravity is 9.8)
-        if (total > avg * 2.5 && total > 20) {
+        // 13m/s² is a soft touch (gravity is 9.8)
+        if (total > avg * 1.3 && total > 13) {
             this.processSajdahTrigger();
         }
     }
