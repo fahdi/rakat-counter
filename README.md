@@ -85,6 +85,17 @@ Real-world testing revealed a fundamental flaw in the accelerometer approach.
     - **Option B**: Accept manual tap as the primary interaction (PWA remains useful for counting, just not automatic)
     - **Option C**: Explore alternative triggers (audio detection, gyroscope patterns, etc.)
 
+### Revision 10: The Religious Constraint
+A critical requirement was discovered that eliminates all web-based solutions.
+- **The Constraint**: Extra movements during Salah (prayer) that aren't part of the prayer can invalidate it. This means **manual tapping is not permissible** during prayer.
+- **The Implication**: The app must be truly "zero-touch" - no manual interaction allowed during prayer.
+- **The Reality**: Web browsers cannot provide the hardware access needed for zero-touch detection:
+    - Camera: Blocked by permissions
+    - Accelerometer: Prayer mats absorb vibrations
+    - No proximity sensor API in browsers
+- **The Solution**: **React Native** is required for access to the proximity sensor, which can detect when the head approaches the phone during Sajdah without requiring any extra movement.
+- **Status**: This PWA will remain as a simple post-prayer counter. A native app is being developed for during-prayer automatic counting.
+
 ---
 
 ## 🚀 How to Install
