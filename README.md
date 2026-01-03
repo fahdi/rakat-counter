@@ -75,6 +75,16 @@ After extensive testing, we discovered that camera-based light detection was too
     3. **Zero Permissions Friction**: Accelerometer works on most browsers without explicit permission prompts (unlike camera).
     4. **Live Force Meter**: Debug panel shows real-time force readings so you can see exactly when the threshold is crossed.
 
+### Revision 9: The Prayer Mat Paradox
+Real-world testing revealed a fundamental flaw in the accelerometer approach.
+- **The Discovery**: Prayer mats are designed to **absorb shock**. Even a solid thump on a wooden table produced less than 1 m/s² change (average stayed at 10 m/s² = gravity). On a soft prayer mat, the vibration dampening is even more extreme.
+- **The Reality**: Accelerometer detection doesn't work for prayer mats. The very surface we're targeting is engineered to prevent the vibrations we're trying to detect.
+- **The Conclusion**: Web sensors (camera blocked, accelerometer ineffective) cannot reliably detect prostrations. The "zero-touch" dream requires hardware access that browsers don't provide.
+- **Next Steps**: 
+    - **Option A**: Pivot to React Native for true hardware access (proximity sensor, better accelerometer APIs)
+    - **Option B**: Accept manual tap as the primary interaction (PWA remains useful for counting, just not automatic)
+    - **Option C**: Explore alternative triggers (audio detection, gyroscope patterns, etc.)
+
 ---
 
 ## 🚀 How to Install
