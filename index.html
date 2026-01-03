@@ -250,12 +250,20 @@
 
         #debug {
             position: fixed;
-            bottom: 5px;
-            font-size: 10px;
-            opacity: 0.3;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 11px;
+            opacity: 0.9;
             width: 100%;
-            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            color: #0f0;
+            padding: 8px;
+            font-family: monospace;
             pointer-events: none;
+            max-height: 120px;
+            overflow-y: auto;
+            line-height: 1.4;
         }
 
         video {
@@ -416,11 +424,14 @@
 
         async function startCamera() {
             try {
+                debugEl.innerHTML += '<br>📷 Requesting camera...';
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 video.srcObject = stream;
+                debugEl.innerHTML += '<br>✅ Camera stream active';
                 detectLight();
             } catch (e) {
-                console.warn("Camera denied, switching to touch-mat mode");
+                console.warn("Camera denied", e);
+                debugEl.innerHTML += '<br>❌ Camera FAILED: ' + e.message;
                 statusEl.innerText = "Touch-Mat Mode Active";
             }
         }
@@ -438,7 +449,10 @@
                 }
                 brightness /= (data.length / 4);
                 counter.processLightLevel(brightness);
-                debugEl.innerText = `Light: ${brightness.toFixed(0)} | Sajdahs: ${counter.sajdahCount}`;
+                const threshold = counter.baseLight * 0.7;
+                debugEl.innerHTML = `📊 SENSORS LIVE<br>💡 Light: ${brightness.toFixed(0)} (base: ${counter.baseLight.toFixed(0)}, thresh: ${threshold.toFixed(0)})<br>🌑 Dark: ${counter.isDark} | 🙏 Sajdahs: ${counter.sajdahCount} | 📿 Rakats: ${counter.count}`;
+            } else {
+                debugEl.innerHTML = `⏳ Video loading... (state: ${video.readyState})`;
             }
             requestAnimationFrame(detectLight);
         }
@@ -487,7 +501,18 @@
                     }
                     window.addEventListener('devicemotion', (e) => {
                         if (e.accelerationIncludingGravity) {
-                            counter.processMotion(e.accelerationIncludingGravity);
+                            const a = e.accelerationIncludingGravity;
+                            counter.processMotion(a);
+                            const total = Math.sqrt(a.x ** 2 + a.y ** 2 + a.z ** 2);
+                            if (debugEl.innerHTML.includes('SENSORS LIVE')) {
+                                const lines = debugEl.innerHTML.split('<br>');
+                                if (lines.length < 4) {
+                                    debugEl.innerHTML += `<br>📳 Accel: ${total.toFixed(1)} m/s²`;
+                                } else {
+                                    lines[3] = `📳 Accel: ${total.toFixed(1)} m/s²`;
+                                    debugEl.innerHTML = lines.join('<br>');
+                                }
+                            }
                         }
                     });
                 }

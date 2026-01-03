@@ -58,6 +58,14 @@ Even with perfect logic, we hit a wall: **Browser Privacy Security.**
     5. **Transparency**: We updated the guide to explain *why* it might fail, moving from "It just works" to "It works, but here is what to do if your phone is being stubborn."
     6. **The Silent Failure Hack**: During testing on Android and iOS, we found that sometimes sensors don't "error out"—they just stay silent. We added a vibration alert when setup fails so the user knows immediately that they need to switch to manual mode without looking at the screen.
 
+### Revision 7: The Debugging & Testing Update
+When users reported that proximity detection wasn't working, we needed a way to diagnose the issue remotely.
+- **The Problem**: Sensors would work in tests but fail silently on real devices. We had no visibility into what was happening.
+- **The Solution**:
+    1. **Automated Test Suite**: Built comprehensive unit tests covering all detection modes (pocket, mat, light, motion). All 5 tests pass, confirming the logic is correct.
+    2. **Live Debug Panel**: Added a visible debug console at the bottom of the screen showing real-time sensor data: camera status, light levels (with thresholds), accelerometer readings, and detection state.
+    3. **Diagnostic Logging**: The app now reports exactly where failures occur (camera permission denied, sensor API missing, etc.) so users can troubleshoot their specific browser/device combination.
+
 ---
 
 ## 🚀 How to Install
