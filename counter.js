@@ -55,15 +55,14 @@ export class RakatCounter {
     }
 
     processMotion(accel) {
-        if (this.mode !== 'mat') return;
         // Impact detection: total acceleration spike
         const total = Math.sqrt(accel.x ** 2 + accel.y ** 2 + accel.z ** 2);
         this.accelBuffer.push(total);
         if (this.accelBuffer.length > 5) this.accelBuffer.shift();
 
         const avg = this.accelBuffer.reduce((a, b) => a + b, 0) / this.accelBuffer.length;
-        // 13m/s² is a soft touch (gravity is 9.8)
-        if (total > avg * 1.3 && total > 13) {
+        // Ultra-sensitive: 11m/s² (just above gravity baseline)
+        if (total > avg * 1.2 && total > 11) {
             this.processSajdahTrigger();
         }
     }

@@ -66,6 +66,15 @@ When users reported that proximity detection wasn't working, we needed a way to 
     2. **Live Debug Panel**: Added a visible debug console at the bottom of the screen showing real-time sensor data: camera status, light levels (with thresholds), accelerometer readings, and detection state.
     3. **Diagnostic Logging**: The app now reports exactly where failures occur (camera permission denied, sensor API missing, etc.) so users can troubleshoot their specific browser/device combination.
 
+### Revision 8: The Accelerometer-Only Pivot
+After extensive testing, we discovered that camera-based light detection was too unreliable across different browsers and devices.
+- **The Decision**: Remove camera dependency entirely. Focus on what works: **pure accelerometer detection**.
+- **The Implementation**:
+    1. **Ultra-Sensitive Threshold**: Lowered to 11 m/s² (just above gravity's 9.8 m/s²) to detect even the gentlest head-to-mat contact.
+    2. **Simplified Logic**: No more hybrid detection. One sensor, one job: detect the vibration/impact when your head touches the mat.
+    3. **Zero Permissions Friction**: Accelerometer works on most browsers without explicit permission prompts (unlike camera).
+    4. **Live Force Meter**: Debug panel shows real-time force readings so you can see exactly when the threshold is crossed.
+
 ---
 
 ## 🚀 How to Install

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rakat-counter-v3';
+const CACHE_NAME = 'rakat-counter-v4';
 const ASSETS = [
   '/',
   '/index.html',
