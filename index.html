@@ -305,20 +305,11 @@
         </div>
 
         <div class="info-box">
-            Automatic mode detects your movements. If your phone or browser doesn't support sensors, you can always tap
-            the big number to count manually.
-        </div>
-
-        <div id="warn" class="warn-box">
-            ⚠️ <b>Sensors restricted.</b> Please ensure you've allowed motion and camera access in your browser
-            settings.
+            Place phone face-up on your prayer mat. The app detects vibrations when your head touches the mat during
+            Sajdah.
         </div>
 
         <div class="ctrl">
-            <div class="mode-sel">
-                <button id="modeMat" class="a">Mat Mode</button>
-                <button id="modePocket">Pocket Mode</button>
-            </div>
             <div class="controls">
                 <button id="start">Start</button>
                 <button id="stop" class="hidden">Finish</button>
@@ -329,15 +320,13 @@
 
     <div id="helpModal" class="m">
         <div class="m-c">
-            <h2>Easy Guide</h2>
-            <p><b>1. Pick a Mode:</b> Use <b>Mat Mode</b> if the phone is on the floor, or <b>Pocket Mode</b> if it's in
-                your pocket.</p>
-            <p><b>2. How it Counts:</b> The app counts <b>1 Rakah</b> every time you finish <b>two prostrations</b>
-                (putting your head down).</p>
-            <p><b>3. Place Phone on Mat:</b> Put your phone face-up on your prayer mat where your head will touch during
+            <h2>How to Use</h2>
+            <p><b>1. Place Phone:</b> Put your phone face-up on your prayer mat where your head will touch during
                 Sajdah.</p>
-            <p><b>4. No Tapping:</b> The app detects the vibration when your head touches the mat. Just pray naturally!
+            <p><b>2. Press Start:</b> The app will detect vibrations automatically.</p>
+            <p><b>3. How it Counts:</b> The app counts <b>1 Rakah</b> every time you complete <b>two prostrations</b>.
             </p>
+            <p><b>4. No Tapping Needed:</b> Just pray naturally - the app detects when your head touches the mat!</p>
             <p style="margin-top:1.5rem;font-size:0.8rem;text-align:center">
                 <a href="https://github.com/fahdi/rakat-counter" target="_blank"
                     style="color:var(--primary);text-decoration:none;font-weight:bold">View on GitHub</a>
@@ -430,24 +419,7 @@
 
         // Light detection removed - accelerometer only
 
-        // Periodically recalibrate ambient light if not currently in a sajdah
-        setInterval(() => {
-            if (counter.mode === 'mat' && !counter.isDark) {
-                counter.baseLight = 0; // Trigger a single frame recalibration
-            }
-        }, 5000);
 
-        modePocket.onclick = () => {
-            modePocket.classList.add('a');
-            modeMat.classList.remove('a');
-            counter.setMode('pocket');
-        };
-
-        modeMat.onclick = () => {
-            modeMat.classList.add('a');
-            modePocket.classList.remove('a');
-            counter.setMode('mat');
-        };
 
         // Tap the counter as a backup
         countEl.onclick = () => {
