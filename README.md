@@ -1,5 +1,8 @@
 # Rakat Counter 📿
 
+> [!IMPORTANT]
+> **Recommended Version**: For automatic "Zero-Touch" counting during prayer, please use the [Rakat Counter Native App](https://github.com/fahdi/rakat-counter-native). This web version is now a manual tap counter.
+
 > **"For those who seek focus, but find their mind wandering. Built with love for the forgetful, the distracted, and the sincere."**
 
 Rakat Counter is a zero-distraction, automatic PWA designed to help Muslims keep track of their Rakahs during Salah. It targets the specific challenges faced by people with ADHD, OCD, or age-related memory issues, ensuring that the focus remains on the prayer, not the count.
